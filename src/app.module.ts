@@ -1,10 +1,10 @@
-import { Module, ValidationPipe } from '@nestjs/common';
+import { ClassSerializerInterceptor, Module, ValidationPipe } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { APP_PIPE } from '@nestjs/core';
+import { APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import * as dotenv from 'dotenv'; 
@@ -19,7 +19,7 @@ dotenv.config();
       host: '127.0.0.1',
       port: 5432,
       username: process.env.DB_USERNAME,
-      database: process.env.nestjs,
+      database: process.env.DB_NAME,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
     }),
@@ -40,6 +40,10 @@ dotenv.config();
       provide: APP_PIPE,
       useClass: ValidationPipe,
     },
+    {
+      provide:APP_INTERCEPTOR,
+      useClass:ClassSerializerInterceptor  //Exclude()
+    }
   ],
 })
 export class AppModule {}

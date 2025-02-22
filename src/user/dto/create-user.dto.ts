@@ -1,34 +1,42 @@
-import { IsNotEmpty, IsString, IsBoolean, IsOptional, Length, IsEmail } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  IsBoolean,
+  IsOptional,
+  Length,
+  IsEmail,
+  IsEnum,
+} from 'class-validator';
 import { BeforeInsert, BeforeUpdate, Unique } from 'typeorm';
 import { Transform } from 'class-transformer';
-@Unique(['email,userName'])
+import { Role } from 'src/auth/guards/roles.enum';
 export class CreateUserDto {
   @IsNotEmpty()
   @IsString()
-  @Transform(({ value }) => value.trim())
+  // @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
   @Length(3, 50)
   userName: string;
 
   @IsNotEmpty()
   @IsEmail()
   @IsString()
-  @Transform(({ value }) => value.trim())
   @Length(10, 50)
   email: string;
 
+  @IsEnum(Role)
+  @IsOptional()
+  role: Role;
+
   @IsNotEmpty()
   @IsString()
-  @Transform(({ value }) => value.trim()) // إزالة المسافات الزائدة هنا
   @Length(6, 100)
   password: string;
   @IsNotEmpty()
   @IsString()
-  @Transform(({ value }) => value.trim()) // إزالة المسافات الزائدة هنا
-
   @Length(3, 100)
   nationality: string;
 
-  @IsOptional() 
+  @IsOptional()
   @IsString()
   profilePhotoUrl: string;
 
@@ -45,12 +53,10 @@ export class CreateUserDto {
   isAccountVerfied: boolean;
 
   @IsOptional()
-  @Transform(({ value }) => value.trim()) // إزالة المسافات الزائدة هنا
   @IsString()
   bio: string;
 
-
-
-
+  @IsOptional()
+  @IsString()
+  token: string;
 }
-

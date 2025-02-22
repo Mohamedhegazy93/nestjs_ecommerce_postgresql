@@ -1,8 +1,10 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, Unique, BeforeInsert, BeforeUpdate } from 'typeorm';
+import { Entity, Column,PrimaryGeneratedColumn,BeforeInsert, BeforeUpdate, Unique } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { Role } from 'src/auth/guards/roles.enum';
 import { Exclude } from 'class-transformer';
 
 @Entity()
+@Unique(['userName'])
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
@@ -11,9 +13,8 @@ export class User {
   userName: string;
   @Column({nullable:false,unique:true})
   email: string;
-
+@Exclude()
   @Column({nullable:false})
-  @Exclude() 
   password: string;
 
   @Column({default:'https://cdn.pixabay.com/photo/2021/07/02/04/48/user-6380868_1280.png'})
@@ -22,9 +23,12 @@ export class User {
   @Column({default:''})
   public_id: string;
 
-  @Column({ default: false })
-  @Exclude()
-  isAdmin: boolean;
+  @Column({
+    type: 'enum',
+    enum: Role,
+    default: Role.User, 
+})
+role:Role;
 
   @Column({ default: false })
   isAccountVerfied: boolean;
@@ -34,11 +38,13 @@ export class User {
 
   @Column({nullable:false})
   nationality: string;
+
   @Column({default:''})
   token: string;
 
   //Hash Password before insert to DB
   @BeforeInsert()
+  @BeforeUpdate()
   async hashPassword() {
     if (this.password) { 
       const saltRounds = 10;
