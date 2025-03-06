@@ -1,8 +1,8 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
-import * as dotenv from 'dotenv'; // استيراد dotenv
-dotenv.config(); // تكوين dotenv - يجب أن يكون هذا السطر في بداية الملف
+import * as dotenv from 'dotenv'; 
+dotenv.config(); 
 
 
 async function bootstrap() {

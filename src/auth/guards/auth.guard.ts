@@ -44,7 +44,7 @@ dotenv.config();
       } 
       
       catch {
-        throw new UnauthorizedException('access denied || admin only');
+        throw new UnauthorizedException('not authorized to perofrm this action');
       }
       return true;
     }

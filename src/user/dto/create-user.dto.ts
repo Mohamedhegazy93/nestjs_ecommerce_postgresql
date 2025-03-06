@@ -22,20 +22,10 @@ export class CreateUserDto {
   @IsString()
   @Length(10, 50)
   email: string;
-
-  @IsEnum(Role)
-  @IsOptional()
-  role: Role;
-
   @IsNotEmpty()
   @IsString()
   @Length(6, 100)
   password: string;
-  @IsNotEmpty()
-  @IsString()
-  @Length(3, 100)
-  nationality: string;
-
   @IsOptional()
   @IsString()
   profilePhotoUrl: string;
@@ -44,19 +34,25 @@ export class CreateUserDto {
   @IsString()
   public_id: string;
 
+  @IsEnum(Role)
   @IsOptional()
-  @IsBoolean()
-  isAdmin: boolean;
-
+  role: Role;
+  
   @IsOptional()
   @IsBoolean()
   isAccountVerfied: boolean;
-
+  
   @IsOptional()
   @IsString()
   bio: string;
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
-  token: string;
+  @Length(3, 100)
+  nationality: string;
+
+
+
+
+
 }

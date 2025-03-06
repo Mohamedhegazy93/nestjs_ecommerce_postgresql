@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, Injectable, RequestTimeoutException } from '@nestjs/common';
 import { LoginDto } from './dto/create-auth.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/user/entities/user.entity';
@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class AuthService {
@@ -13,6 +14,7 @@ export class AuthService {
     @InjectRepository(User)
     private usersRepository: Repository<User>,
     private jwtService: JwtService,
+    private mailerService: MailerService,
   ) {}
   //Register
   async register(createUserDto: CreateUserDto) {
@@ -28,9 +30,9 @@ export class AuthService {
 
     return {
       message: `${newUser.userName} registered sucessfully , login now`,
-      userName: newUser.userName,
-      email: newUser.email,
-      role: newUser.role,
+      userName:newUser.userName,
+      email:newUser.email,
+      role:newUser.role,
     };
   }
   //Login
@@ -42,7 +44,7 @@ export class AuthService {
       throw new HttpException('please resgister first', 400);
     }
     const isMatch = await user.comparePassword(loginDto.password);
-    if (!isMatch) {
+    if (isMatch) {
       throw new HttpException('incorrect email or password', 400);
     }
 
@@ -52,15 +54,29 @@ export class AuthService {
     };
 
     const token = this.jwtService.sign(payload);
-    await this.usersRepository.save(user);
+    try {
+      await this.mailerService.sendMail({
+        to:user.email,
+        from:'nestjs_project',
+        subject:'login',
+        html:`hello ${user.userName}`
+
+
+      })
+
+      
+    } catch (error) {
+      console.log(error)
+      throw new RequestTimeoutException()
+      
+    }
     console.log(token);
     return {
-      message: 'logged successfully',
+      message:'logged successfully',
       token,
       email: user.email,
       id: user.id,
     };
+
   }
-
-
 }

@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   HttpException,
   Injectable,
   NotFoundException,
@@ -10,6 +11,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
+import { join } from 'path';
+import { unlinkSync } from 'fs';
+import { isURL, IsUrl } from 'class-validator';
 
 @Injectable()
 export class UserService {
@@ -77,12 +81,46 @@ export class UserService {
     if (!user) {
       throw new NotFoundException(`no user for ${id} id`);
     }
-    if (payload.id !== id) {
-      throw new UnauthorizedException(`you cant accsess this data`);
+      await this.usersRepository.remove(user);
+      return {
+        message: 'user deleted sucessfully',
+      };
+
+   
+  }
+
+  async setProfileImage(userId: number, newProfileImage: string) {
+    const user = await this.usersRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException();
     }
-    await this.usersRepository.remove(user);
-    return {
-      message: 'user deleted sucessfully',
-    };
+    if (user.profileImage===null) {
+      user.profileImage = newProfileImage;
+    }else{
+      await this.removeProfileImage(userId);
+      user.profileImage = newProfileImage;
+    }
+    return this.usersRepository.save(user);
+
+
+    
+  }
+
+  async removeProfileImage(userid: number) {
+    const user = await this.usersRepository.findOne({ where: { id: userid } });
+    if(!user){throw new NotFoundException()}
+    if (user?.profileImage===null) {
+      throw new BadRequestException('no image to delete')
+    }
+
+   
+    const imagePath = join(
+      process.cwd(),
+      `./images/users/${user?.profileImage}`,
+    );
+    
+    unlinkSync(imagePath);
+    user.profileImage=''
+    return await this.usersRepository.save(user);
   }
 }

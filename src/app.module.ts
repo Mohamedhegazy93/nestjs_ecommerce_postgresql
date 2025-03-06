@@ -7,7 +7,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
+import { ProductModule } from './product/product.module';
+import { ReviewModule } from './review/review.module';
 import * as dotenv from 'dotenv'; 
+import { UploadsModule } from './uploads/uploads.module';
+import { MailModule } from './mail/mail.module';
 dotenv.config(); 
 
 
@@ -25,12 +29,16 @@ dotenv.config();
     }),
     AuthModule,
     UserModule,
+    MailModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
       ignoreEnvFile:true
       
     }),
+    ProductModule,
+    ReviewModule,
+    UploadsModule
   ],
 
   controllers: [AppController],
