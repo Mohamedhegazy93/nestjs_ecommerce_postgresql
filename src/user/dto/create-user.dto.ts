@@ -13,7 +13,6 @@ import { Role } from 'src/auth/guards/roles.enum';
 export class CreateUserDto {
   @IsNotEmpty()
   @IsString()
-  // @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
   @Length(3, 50)
   userName: string;
 
@@ -37,11 +36,11 @@ export class CreateUserDto {
   @IsEnum(Role)
   @IsOptional()
   role: Role;
-  
+
   @IsOptional()
   @IsBoolean()
   isAccountVerfied: boolean;
-  
+
   @IsOptional()
   @IsString()
   bio: string;
@@ -50,9 +49,4 @@ export class CreateUserDto {
   @IsString()
   @Length(3, 100)
   nationality: string;
-
-
-
-
-
 }

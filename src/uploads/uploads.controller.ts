@@ -14,6 +14,7 @@ import { diskStorage } from 'multer';
 
 @Controller('uploads')
 export class UploadsController {
+  // POST: ~/uploads/file
   @Post()
   @UseInterceptors(
     FileInterceptor('file', {
@@ -44,7 +45,7 @@ export class UploadsController {
     return { messgae: 'file uploaded sucessfully' };
   }
 
-
+// GET: ~/uploads/:image
   @Get(":image")
   showImage(@Param('image') image:string,@Res() res:Response){
     return res.sendFile(image,{root:'images'})

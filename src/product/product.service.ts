@@ -11,6 +11,7 @@ export class ProductService {
     @InjectRepository(Product)
     private productsRepository: Repository<Product>,
   ) {}
+  // Create Product
   async create(createProductDto: CreateProductDto) {
     const product = this.productsRepository.create(createProductDto);
     const saveProduct = await this.productsRepository.save(product);
@@ -20,25 +21,28 @@ export class ProductService {
       saveProduct,
     };
   }
-
-  async findAll(title?:string,minPrice?:string,maxPrice?:string) {
-    const filters={
-      ...(title?{title:Like(`%${title}%`)}:{}),
-      ...(minPrice&&maxPrice?{price:Between(parseInt(minPrice),parseInt(maxPrice))}:{})
-    }
-    const products = await this.productsRepository.find({where:filters,relations:{reviews:true}});
+  // Get All Products
+  async findAll(title?: string, minPrice?: string, maxPrice?: string) {
+    const filters = {
+      ...(title ? { title: Like(`%${title}%`) } : {}),
+      ...(minPrice && maxPrice
+        ? { price: Between(parseInt(minPrice), parseInt(maxPrice)) }
+        : {}),
+    };
+    const products = await this.productsRepository.find({
+      where: filters,
+      relations: { reviews: true },
+    });
     return {
       length: products.length,
       products,
     };
   }
-
+  // Get Product
   async findOne(id: number) {
     const product = await this.productsRepository.findOne({
       where: { id },
-      relations: ['reviews','reviews.user'], 
-      
-  
+      relations: ['reviews', 'reviews.user'],
     });
     if (!product) {
       throw new NotFoundException(`no product for ${id} id`);
@@ -47,7 +51,7 @@ export class ProductService {
       product,
     };
   }
-
+  // Update Product
   async update(id: number, updateProductDto: UpdateProductDto) {
     const product = await this.productsRepository.findOneBy({ id });
     if (!product) {
@@ -61,7 +65,7 @@ export class ProductService {
       product,
     };
   }
-
+  // Delete Product
   async remove(id: number) {
     const product = await this.productsRepository.findOneBy({ id });
     if (!product) {

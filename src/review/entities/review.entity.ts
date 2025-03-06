@@ -23,9 +23,11 @@ export class Review {
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
-  @ManyToOne(()=>Product,(product)=>product.reviews,{onDelete:'CASCADE'})
+  @ManyToOne(() => Product, (product) => product.reviews, {
+    onDelete: 'CASCADE',
+  })
   product: Product;
 
-@ManyToOne(()=>User,(user)=>user.reviews,{onDelete:'CASCADE'})
-  user:User
+  @ManyToOne(() => User, (user) => user.reviews, { onDelete: 'CASCADE' })
+  user: User;
 }

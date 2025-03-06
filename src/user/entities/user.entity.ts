@@ -27,7 +27,6 @@ export class User {
   @Column({ nullable: false })
   password: string;
 
-
   @Column({ default: '' })
   public_id: string;
 
@@ -46,14 +45,18 @@ export class User {
 
   @Column({ nullable: false })
   nationality: string;
+  @Column({ nullable: true })
+  emailVerfiyCode: string;
+  @Column({ nullable: true })
+  resetPasswordCode: string;
 
-  @CreateDateColumn({ type:'timestamp'})
+  @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
-  @Column({ nullable: true,})
-  profileImage:string
-  @OneToMany(()=>Review,(review)=>review.user)
-  reviews:Review[]
+  @Column({ nullable: true })
+  profileImage: string;
+  @OneToMany(() => Review, (review) => review.user)
+  reviews: Review[];
 
   //Hash Password before insert to DB
   @BeforeInsert()
@@ -63,9 +66,5 @@ export class User {
       const saltRounds = 10;
       this.password = await bcrypt.hash(this.password, saltRounds);
     }
-  }
-
-  async comparePassword(password: string): Promise<boolean> {
-    return await bcrypt.compare(password,this.password);
   }
 }

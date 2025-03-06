@@ -2,6 +2,7 @@ import { MailerModule } from "@nestjs-modules/mailer";
 import { flatten, Module } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import * as dotenv from 'dotenv'; 
+import { join } from "node:path";
 dotenv.config(); 
 
 @Module({
@@ -17,7 +18,8 @@ dotenv.config();
                         user:config.get<string>('SMTP_USERNAME'),
                         pass:config.get<string>('SMTP_PASSWORD'),
                     }
-                }
+                },
+                
             }
         }
     })]

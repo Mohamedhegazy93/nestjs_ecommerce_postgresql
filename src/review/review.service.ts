@@ -22,6 +22,8 @@ export class ReviewService {
     @InjectRepository(Review)
     private reviewsRepository: Repository<Review>,
   ) {}
+
+
   //CREATE REVIEW
   async create(createReviewDto: CreateReviewDto, prodcutId: number, payload) {
     const user = await this.usersRepository.findOneByOrFail({ id: payload.id });
@@ -41,11 +43,12 @@ export class ReviewService {
       saveReview,
     };
   }
+
   //GET ALL REVIEWS
-  async findAll(pageNumber:number,reviewPerPage:number) {
+  async findAll(pageNumber: number, reviewPerPage: number) {
     const reviews = await this.reviewsRepository.find({
-      skip:reviewPerPage*(pageNumber-1),
-      take:reviewPerPage,
+      skip: reviewPerPage * (pageNumber - 1),
+      take: reviewPerPage,
       relations: { product: true },
     });
     if (!reviews) {
@@ -57,6 +60,7 @@ export class ReviewService {
       reviews,
     };
   }
+
   //GET REVIEWS FOR PRODUCT
   async findReviewsForProduct(productId: number, payload) {
     const reviews = await this.reviewsRepository.find({
@@ -77,8 +81,8 @@ export class ReviewService {
       };
     });
   }
-  //GET SPECIFIC REVIEW
 
+  //GET SPECIFIC REVIEW
   async getReview(id: number) {
     const review = await this.reviewsRepository.find({
       where: { id },
@@ -91,6 +95,7 @@ export class ReviewService {
     return review;
   }
 
+  // Update Review
   async update(id: number, updateReviewDto: UpdateReviewDto, payload) {
     const review = await this.reviewsRepository.findOne({
       where: { id },
@@ -112,6 +117,7 @@ export class ReviewService {
     throw new UnauthorizedException();
   }
 
+  // Delete Review
   async remove(id: number, payload) {
     const review = await this.reviewsRepository.findOneBy({ id });
     if (!review) {
